@@ -1,14 +1,15 @@
 import React from "react";
 import Map from "../components/Map";
 import { Layer, Feature } from "react-mapbox-gl";
-import { Marker } from "react-mapbox-gl";
 import apiHandler from "../api/apiHandler";
+import ItemCard from "../components/itemCard";
 
-const markerUrl = "media/marker-purple.svg";
+// const markerUrl = "media/marker-purple.svg";
 
 class Home extends React.Component {
   state = {
     markers: [],
+    markerClickedId: "",
   };
 
   componentDidMount() {
@@ -23,6 +24,12 @@ class Home extends React.Component {
       .catch((err) => console.log(err));
   }
 
+  handleMarkerClick = (markerId) => {
+    this.setState({
+      markerClickedId: markerId,
+    });
+  };
+
   render() {
     return (
       <div>
@@ -33,15 +40,20 @@ class Home extends React.Component {
             width: "100vw",
           }}
         >
-          <Marker coordinates={[-0.2416815, 51.5285582]} anchor="bottom">
-            <img src={markerUrl} />
-          </Marker>
-
-          <Layer type="symbol" layout={{ "icon-image": "harbor-15" }}>
-            <Feature coordinates={[-0.13235092163085938, 51.518250335096376]} />
+          {/* <ItemCard id={this.state.markerClickedId} /> */}
+          <Layer type="symbol" layout={{ "icon-image": "rocket-15" }}>
+            {this.state.markers.map((marker) => (
+              <Feature
+                onClick={() => this.handleMarkerClick(marker._id)}
+                key={marker._id}
+                coordinates={[
+                  marker.location.coordinates[0],
+                  marker.location.coordinates[1],
+                ]}
+              />
+            ))}
           </Layer>
         </Map>
-        ;
       </div>
     );
   }

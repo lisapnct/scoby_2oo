@@ -3,14 +3,36 @@ import { Link } from "react-router-dom";
 import { withUser } from "../components/Auth/withUser";
 import "../styles/Profile.css";
 import "../styles/CardItem.css";
+import CardEmpty from "../components/CardEmpty";
+import ItemCardProfile from "../components/itemCardProfile";
+import apiHandler from "../api/apiHandler";
+
 class Profile extends Component {
+  state = {
+    items: [],
+  };
+
+  componentDidMount() {
+    apiHandler
+      .getItems()
+      .then((items) => {
+        console.log(items);
+        this.setState({
+          items: items,
+        });
+      })
+      .catch((err) => console.log(err));
+  }
+
   render() {
     const { authContext } = this.props;
     const { user } = authContext;
 
+    console.log(user);
+
     return (
       <div style={{ padding: "100px", fontSize: "1.25rem" }}>
-        <h2 style={{ fontSize: "1.5rem", marginBottom: "10px" }}>
+        {/* <h2 style={{ fontSize: "1.5rem", marginBottom: "10px" }}>
           This is profile, it's protected !
         </h2>
         <p>
@@ -24,7 +46,7 @@ class Profile extends Component {
           href="https://reacttraining.com/react-router/web/example/auth-workflow"
         >
           React router dom Demo of a protected route
-        </a>
+        </a> */}
 
         <section className="Profile">
           <div className="user-image round-image">
@@ -59,40 +81,19 @@ class Profile extends Component {
             </form>
           </div>
 
-          {/* Break whatever is belo  */}
-          <div className="CardItem">
-            <div className="item-empty">
-              <div className="round-image">
-                <img src="/media/personal-page-empty-state.svg" alt="" />
-              </div>
-              <p>You don't have any items :(</p>
-            </div>
-          </div>
-
-          <div className="CardItem">
-            <h3>Your items</h3>
-            <div className="item">
-              <div className="round-image">
-                <img
-                  src="https://vignette.wikia.nocookie.net/simpsons/images/1/14/Ralph_Wiggum.png/revision/latest/top-crop/width/360/height/360?cb=20100704163100"
-                  alt="item"
+          <h3>Your items</h3>
+          {this.state.items.map((item) => {
+            if (item.id_user === user._id) {
+              return (
+                <ItemCardProfile
+                  key={item._id}
+                  name={item.name}
+                  quantity={item.quantity}
+                  description={item.description}
                 />
-              </div>
-              <div className="description">
-                <h2>Name of item</h2>
-                <h4>Quantity: 1 </h4>
-                <p>Description of the item</p>
-                <div className="buttons">
-                  <span>
-                    <button className="btn-secondary">Delete</button>
-                  </span>
-                  <span>
-                    <button className="btn-primary">Edit</button>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+              );
+            }
+          })}
         </section>
       </div>
     );

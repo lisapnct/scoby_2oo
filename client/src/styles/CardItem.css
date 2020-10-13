@@ -1,5 +1,8 @@
 .CardItem {
   margin-top: 50px;
+  /* z-index: 500;
+  position: absolute;
+  left: 50px; */
 }
 
 .CardItem .item {

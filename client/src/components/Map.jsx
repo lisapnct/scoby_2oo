@@ -5,3 +5,4 @@ const Map = ReactMapboxGl({
 });
 
 export default Map;
+

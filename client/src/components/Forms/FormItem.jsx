@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import LocationAutoComplete from "../LocationAutoComplete";
+import { withUser } from "../Auth/withUser";
 import "../../styles/form.css";
 
 import apiHandler from "../../api/apiHandler";
@@ -12,8 +13,9 @@ class ItemForm extends Component {
     description: "",
     image: "",
     location: {
-      coordinates: [],
+      coordinates: {},
     },
+    id_user: this.props.authContext.user._id,
   };
 
   handleChange = (event) => {
@@ -28,44 +30,42 @@ class ItemForm extends Component {
   handleSubmit = (event) => {
     event.preventDefault();
 
-    function buildFormData(formData, data, parentKey) {
-      if (
-        data &&
-        typeof data === "object" &&
-        !(data instanceof Date) &&
-        !(data instanceof File)
-      ) {
-        Object.keys(data).forEach((key) => {
-          console.log(key);
-          buildFormData(
-            formData,
-            data[key],
-            parentKey ? `${parentKey}[${key}]` : key
-          );
-        });
-      } else {
-        
-        const value = data == null ? "" : data;
-        console.log(value);
-        formData.append(parentKey, value);
-      }
-    }
+    // function buildFormData(formData, data, parentKey) {
+    //   if (
+    //     data &&
+    //     typeof data === "object" &&
+    //     !(data instanceof Date) &&
+    //     !(data instanceof File)
+    //   ) {
+    //     Object.keys(data).forEach((key) => {
+    //       buildFormData(
+    //         formData,
+    //         data[key],
+    //         parentKey ? `${parentKey}[${key}]` : key
+    //       );
+    //     });
+    //   } else {
+    //     const value = data == null ? "" : data;
+    //     console.log(value);
+    //     formData.append(parentKey, value);
+    //   }
+    // }
 
-    function jsonToFormData(data) {
-      const formData = new FormData();
+    // function jsonToFormData(data) {
+    //   const formData = new FormData();
 
-      buildFormData(formData, data);
+    //   buildFormData(formData, data);
 
-      return formData;
-    }
+    //   return formData;
+    // }
 
-    const item = jsonToFormData(this.state);
-    console.log(item);
+    // const item = jsonToFormData(itemObject);
+    // console.log(item);
 
-    // apiHandler
-    //   .createItem(this.state)
-    //   .then((apiRes) => console.log(apiRes))
-    //   .catch((err) => console.log(err));
+    apiHandler
+      .createItem(this.state)
+      .then((apiRes) => console.log(apiRes))
+      .catch((err) => console.log(err));
 
     // In order to send back the data to the client, since there is an input type file you have to send the
     // data as formdata.
@@ -79,9 +79,13 @@ class ItemForm extends Component {
     // This handle is passed as a callback to the autocomplete component.
     // Take a look at the data and see what you can get from it.
     // Look at the item model to know what you should retrieve and set as state.
-    const location = place.geometry.coordinates;
+    console.log(place);
     this.setState({
-      location: location,
+      location: {
+        type: place.geometry.type,
+        coordinates: place.geometry.coordinates,
+        formattedAddress: place.place_name,
+      },
     });
   };
 
@@ -198,4 +202,4 @@ class ItemForm extends Component {
   }
 }
 
-export default ItemForm;
+export default withUser(ItemForm);
