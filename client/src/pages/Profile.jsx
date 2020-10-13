@@ -34,12 +34,47 @@ class Profile extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    apiHandler.updateProfile(`/api/users/me/${this.props.authContext.user._id}`, this.state);
+    apiHandler
+      .updateProfile(
+        `/api/users/me/${this.props.authContext.user._id}`,
+        this.state
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
   };
 
   render() {
     const { authContext } = this.props;
     const { user } = authContext;
+
+    let itemsCount = 0;
+
+    const displayUserItems = () => {
+      {
+        this.state.items.map((item) => {
+          if (item.id_user === user._id) {
+            itemsCount += 1;
+            return (
+              <ItemCardProfile
+                key={item._id}
+                name={item.name}
+                quantity={item.quantity}
+                description={item.description}
+              />
+            );
+          }
+        });
+      }
+    };
+
+    const displayEmptyIllu = () => {
+      console.log("items count=" + itemsCount);
+      if (itemsCount === 0) {
+        return <CardEmpty />;
+      }
+    };
 
     const userPhone = () => {
       if (user.phone) {
@@ -106,20 +141,10 @@ class Profile extends Component {
           </div>
 
           {userPhone()}
-
+        <br/>
           <h3>Your items</h3>
-          {this.state.items.map((item) => {
-            if (item.id_user === user._id) {
-              return (
-                <ItemCardProfile
-                  key={item._id}
-                  name={item.name}
-                  quantity={item.quantity}
-                  description={item.description}
-                />
-              );
-            }
-          })}
+          {displayUserItems()}
+          {displayEmptyIllu()}
         </section>
       </div>
     );

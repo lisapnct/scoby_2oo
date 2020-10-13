@@ -64,7 +64,10 @@ class ItemForm extends Component {
 
     apiHandler
       .createItem(this.state)
-      .then((apiRes) => console.log(apiRes))
+      .then((apiRes) => {
+        console.log(apiRes)
+        this.props.history.push("/");
+      })
       .catch((err) => console.log(err));
 
     // In order to send back the data to the client, since there is an input type file you have to send the
