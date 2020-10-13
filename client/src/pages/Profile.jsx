@@ -10,6 +10,7 @@ import apiHandler from "../api/apiHandler";
 class Profile extends Component {
   state = {
     items: [],
+    userPhone: "",
   };
 
   componentDidMount() {
@@ -24,11 +25,54 @@ class Profile extends Component {
       .catch((err) => console.log(err));
   }
 
+  handleChange = (event) => {
+    const value = event.target.value;
+    this.setState({
+      userPhone: value,
+    });
+  };
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+    apiHandler.updateProfile(`/api/users/me/${this.props.authContext.user._id}`, this.state);
+  };
+
   render() {
     const { authContext } = this.props;
     const { user } = authContext;
 
-    console.log(user);
+    const userPhone = () => {
+      if (user.phone) {
+        return (
+          <div className="user-contact">
+            <h2>Your phone number:</h2>
+            <p>{user.phone}</p>
+          </div>
+        );
+      } else {
+        return (
+          <div className="user-contact">
+            <h4>Add a phone number</h4>
+            <form className="form" onSubmit={this.handleSubmit}>
+              <div className="form-group">
+                <label className="label" htmlFor="phoneNumber">
+                  Phone number
+                </label>
+                <input
+                  className="input"
+                  id="phoneNumber"
+                  type="text"
+                  name="phoneNumber"
+                  placeholder="Add phone number"
+                  onChange={this.handleChange}
+                />
+              </div>
+              <button className="form__button">Add phone number</button>
+            </form>
+          </div>
+        );
+      }
+    };
 
     return (
       <div style={{ padding: "100px", fontSize: "1.25rem" }}>
@@ -61,25 +105,7 @@ class Profile extends Component {
             </Link>
           </div>
 
-          <div className="user-contact">
-            <h4>Add a phone number</h4>
-
-            <form className="form">
-              <div className="form-group">
-                <label className="label" htmlFor="phoneNumber">
-                  Phone number
-                </label>
-                <input
-                  className="input"
-                  id="phoneNumber"
-                  type="text"
-                  name="phoneNumber"
-                  placeholder="Add phone number"
-                />
-              </div>
-              <button className="form__button">Add phone number</button>
-            </form>
-          </div>
+          {userPhone()}
 
           <h3>Your items</h3>
           {this.state.items.map((item) => {

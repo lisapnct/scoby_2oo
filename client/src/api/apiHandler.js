@@ -64,4 +64,11 @@ export default {
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
   },
+
+  updateProfile(endPoint, data) {
+    return service
+      .patch(endPoint, data)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  },
 };
