@@ -14,6 +14,7 @@ router.get("/", (req, res, next) => {
 });
 
 router.post("/", (req, res, next) => {
+  console.log(req.body);
   Item.create(req.body)
     .then((itemDoc) => {
       console.log(itemDoc);
