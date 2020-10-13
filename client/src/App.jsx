@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
 import FormItem from "./components/Forms/FormItem";
+import EditItem from "./pages/EditItem";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route exact path="/signin" component={Signin} />
         <Route exact path="/signup" component={Signup} />
         <ProtectedRoute exact path="/item/create" component={FormItem} />
+        <ProtectedRoute exact path="/item/edit/:id" component={EditItem} />
         <ProtectedRoute exact path="/profile" component={Profile} />
       </Switch>
     </div>

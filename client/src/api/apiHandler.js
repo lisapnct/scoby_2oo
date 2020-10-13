@@ -61,13 +61,27 @@ export default {
   getOneItem(id) {
     return service
       .get("/api/items/" + id)
-      .then((res) => console.log(res))
+      .then((res) => res.data)
+      .catch((err) => console.log(err));
+  },
+
+  updateItem(id, data) {
+    return service
+      .patch("/api/items/" + id, data)
+      .then((res) => res.data)
       .catch((err) => console.log(err));
   },
 
   updateProfile(endPoint, data) {
     return service
       .patch(endPoint, data)
+      .then((res) => res.data)
+      .catch((err) => console.log(err));
+  },
+
+  deleteItem(endPoint, id) {
+    return service
+      .delete(endPoint + id)
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
   },

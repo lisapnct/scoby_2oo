@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import LocationAutoComplete from "../LocationAutoComplete";
 import { withUser } from "../Auth/withUser";
+import { withRouter } from "react-router-dom";
 import "../../styles/form.css";
 
 import apiHandler from "../../api/apiHandler";
@@ -13,10 +14,37 @@ class ItemForm extends Component {
     description: "",
     image: "",
     location: {
-      coordinates: {},
+      type: "",
+      coordinates: [],
+      formattedAddress: "",
     },
     id_user: this.props.authContext.user._id,
   };
+
+  componentDidMount() {
+    if (this.props.action === "edit") {
+      apiHandler
+        .getOneItem(this.props.id)
+        .then((resApi) => {
+          console.log("this is the api response: ", resApi);
+          const item = resApi;
+          console.log(item);
+          this.setState({
+            name: item.name,
+            category: item.category,
+            quantity: item.quantity,
+            description: item.description,
+            image: item.image,
+            location: {
+              type: item.location.type,
+              coordinates: item.location.coordinates,
+              formattedAddress: item.location.formattedAddress,
+            },
+          });
+        })
+        .catch((err) => console.log(err));
+    }
+  }
 
   handleChange = (event) => {
     const value =
@@ -27,8 +55,24 @@ class ItemForm extends Component {
     });
   };
 
-  handleSubmit = (event) => {
-    event.preventDefault();
+  updateItem = () => {
+    apiHandler
+      .updateItem(this.props.id, this.state)
+      .then((apiRes) => {
+        console.log(apiRes);
+        this.props.history.push("/profile");
+      })
+      .catch((err) => console.log(err));
+  };
+
+  createItem = () => {
+    apiHandler
+      .createItem(this.state)
+      .then((apiRes) => {
+        // console.log(apiRes);
+        this.props.history.push("/");
+      })
+      .catch((err) => console.log(err));
 
     // function buildFormData(formData, data, parentKey) {
     //   if (
@@ -62,14 +106,6 @@ class ItemForm extends Component {
     // const item = jsonToFormData(itemObject);
     // console.log(item);
 
-    apiHandler
-      .createItem(this.state)
-      .then((apiRes) => {
-        console.log(apiRes)
-        this.props.history.push("/");
-      })
-      .catch((err) => console.log(err));
-
     // In order to send back the data to the client, since there is an input type file you have to send the
     // data as formdata.
     // The object that you'll be sending will maybe be a nested object, in order to handle nested objects in our form data
@@ -78,11 +114,19 @@ class ItemForm extends Component {
     // Nested object into formData by user Vladimir "Vladi vlad" Novopashin @stackoverflow : ) => https://stackoverflow.com/a/42483509
   };
 
+  handleSubmit = (event) => {
+    event.preventDefault();
+    if (this.props.action === "edit") {
+      this.updateItem();
+    } else {
+      this.createItem();
+    }
+  };
+
   handlePlace = (place) => {
     // This handle is passed as a callback to the autocomplete component.
     // Take a look at the data and see what you can get from it.
     // Look at the item model to know what you should retrieve and set as state.
-    console.log(place);
     this.setState({
       location: {
         type: place.geometry.type,
@@ -205,4 +249,4 @@ class ItemForm extends Component {
   }
 }
 
-export default withUser(ItemForm);
+export default withRouter(withUser(ItemForm));

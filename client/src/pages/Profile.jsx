@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { withUser } from "../components/Auth/withUser";
 import "../styles/Profile.css";
 import "../styles/CardItem.css";
-import CardEmpty from "../components/CardEmpty";
+// import CardEmpty from "../components/CardEmpty";
 import ItemCardProfile from "../components/itemCardProfile";
 import apiHandler from "../api/apiHandler";
 
@@ -49,32 +49,13 @@ class Profile extends Component {
     const { authContext } = this.props;
     const { user } = authContext;
 
-    let itemsCount = 0;
 
-    const displayUserItems = () => {
-      {
-        this.state.items.map((item) => {
-          if (item.id_user === user._id) {
-            itemsCount += 1;
-            return (
-              <ItemCardProfile
-                key={item._id}
-                name={item.name}
-                quantity={item.quantity}
-                description={item.description}
-              />
-            );
-          }
-        });
-      }
-    };
-
-    const displayEmptyIllu = () => {
-      console.log("items count=" + itemsCount);
-      if (itemsCount === 0) {
-        return <CardEmpty />;
-      }
-    };
+    // const displayEmptyIllu = () => {
+    //   console.log("items count=" + itemsCount);
+    //   if (itemsCount === 0) {
+    //     return <CardEmpty />;
+    //   }
+    // };
 
     const userPhone = () => {
       if (user.phone) {
@@ -141,10 +122,21 @@ class Profile extends Component {
           </div>
 
           {userPhone()}
-        <br/>
+
           <h3>Your items</h3>
-          {displayUserItems()}
-          {displayEmptyIllu()}
+          {this.state.items.map((item) => {
+            if (item.id_user === user._id) {
+              return (
+                <ItemCardProfile
+                  key={item._id}
+                  id={item._id}
+                  name={item.name}
+                  quantity={item.quantity}
+                  description={item.description}
+                />
+              );
+            }
+          })}
         </section>
       </div>
     );

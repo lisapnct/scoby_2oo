@@ -28,6 +28,7 @@ router.post("/", (req, res, next) => {
 router.get("/:id", (req, res, next) => {
   Item.findById(req.params.id)
     .then((dbRes) => {
+      console.log(dbRes);
       res.status(200).json(dbRes);
     })
     .catch((err) => {

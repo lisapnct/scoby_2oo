@@ -1,6 +1,13 @@
 import React, { Component } from "react";
+import apiHandler from "../api/apiHandler";
+import { Link } from "react-router-dom";
 
 class itemCardProfile extends Component {
+  handleDelete = () => {
+    console.log(this.props.id);
+    apiHandler.deleteItem("/api/items/", this.props.id);
+  };
+
   render() {
     return (
       <div className="CardItem">
@@ -17,10 +24,14 @@ class itemCardProfile extends Component {
             <p>{this.props.description}</p>
             <div className="buttons">
               <span>
-                <button className="btn-secondary">Delete</button>
+                <button onClick={this.handleDelete} className="btn-secondary">
+                  Delete
+                </button>
               </span>
               <span>
-                <button className="btn-primary">Edit</button>
+                <button className="btn-primary">
+                  <Link to={`/item/edit/${this.props.id}`}>Edit</Link>
+                </button>
               </span>
             </div>
           </div>
